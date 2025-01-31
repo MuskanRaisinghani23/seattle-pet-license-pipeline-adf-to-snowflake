@@ -1,0 +1,11 @@
+{
+	"name": "AzureKeyVault_LS",
+	"properties": {
+		"description": "access my key vault from ADF",
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://damg7370kvmuskan.vault.azure.net/"
+		}
+	}
+}
