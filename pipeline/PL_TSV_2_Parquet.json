@@ -97,7 +97,7 @@
 							{
 								"name": "DI_LOAD_DT",
 								"value": {
-									"value": "@convertTimeZone(utcnow(),'UTC','Eastern Standard Time')",
+									"value": "@utcNow()",
 									"type": "Expression"
 								}
 							}
