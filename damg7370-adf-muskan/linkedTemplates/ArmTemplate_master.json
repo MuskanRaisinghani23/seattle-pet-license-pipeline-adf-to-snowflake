@@ -7,13 +7,29 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "damg7370-adf-muskan"
 		},
-		"AzureKeyVault_LS_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://damg7370kvmuskan.vault.azure.net/"
+		"Snowflake1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Snowflake1'"
 		},
 		"AzureDataLakeStorage_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://damg7370muskan.dfs.core.windows.net/"
+		},
+		"AzureKeyVault_LS_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://damg7370kvmuskan.vault.azure.net/"
+		},
+		"Snowflake1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "DADABI_DB"
+		},
+		"Snowflake1_properties_typeProperties_role": {
+			"type": "string",
+			"defaultValue": "DEVELOPER"
+		},
+		"AzureBlobStorage1_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -42,11 +58,23 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AzureKeyVault_LS_properties_typeProperties_baseUrl": {
-						"value": "[parameters('AzureKeyVault_LS_properties_typeProperties_baseUrl')]"
+					"Snowflake1_password": {
+						"value": "[parameters('Snowflake1_password')]"
 					},
 					"AzureDataLakeStorage_LS_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage_LS_properties_typeProperties_url')]"
+					},
+					"AzureKeyVault_LS_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault_LS_properties_typeProperties_baseUrl')]"
+					},
+					"Snowflake1_properties_typeProperties_database": {
+						"value": "[parameters('Snowflake1_properties_typeProperties_database')]"
+					},
+					"Snowflake1_properties_typeProperties_role": {
+						"value": "[parameters('Snowflake1_properties_typeProperties_role')]"
+					},
+					"AzureBlobStorage1_sasUri": {
+						"value": "[parameters('AzureBlobStorage1_sasUri')]"
 					}
 				}
 			},
