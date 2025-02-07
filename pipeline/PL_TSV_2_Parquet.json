@@ -54,7 +54,10 @@
 				"outputs": [
 					{
 						"referenceName": "Parquet2",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": "pet_lic_data.parquet"
+						}
 					}
 				]
 			},
