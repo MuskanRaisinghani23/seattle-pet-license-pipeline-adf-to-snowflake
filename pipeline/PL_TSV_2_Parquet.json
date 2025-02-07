@@ -97,7 +97,7 @@
 							{
 								"name": "DI_LOAD_DT",
 								"value": {
-									"value": "@formatDateTime(utcNow())",
+									"value": "@formatDateTime(utcnow(), 'yyyy-MM-dd')",
 									"type": "Expression"
 								}
 							}
