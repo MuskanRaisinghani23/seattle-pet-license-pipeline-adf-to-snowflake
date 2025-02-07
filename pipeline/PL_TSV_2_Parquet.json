@@ -88,14 +88,14 @@
 						"type": "ParquetSource",
 						"additionalColumns": [
 							{
-								"name": "DI_JOB_ID ",
+								"name": "JOB_ID",
 								"value": {
 									"value": "@pipeline().RunId",
 									"type": "Expression"
 								}
 							},
 							{
-								"name": "DI_LOAD_DT",
+								"name": "LOAD_DT",
 								"value": {
 									"value": "@utcNow()",
 									"type": "Expression"
