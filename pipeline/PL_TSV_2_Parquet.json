@@ -56,7 +56,10 @@
 						"referenceName": "Parquet2",
 						"type": "DatasetReference",
 						"parameters": {
-							"Filename": "pet_lic_data.parquet"
+							"Filename": {
+								"value": "@variables('my_parquet_file')",
+								"type": "Expression"
+							}
 						}
 					}
 				]
@@ -110,6 +113,7 @@
 					},
 					"sink": {
 						"type": "SnowflakeV2Sink",
+						"preCopyScript": "TRUNCATE TABLE\nSTAGE_SCHEMA.PET_LICENSE_STAGE;",
 						"importSettings": {
 							"type": "SnowflakeImportCopyCommand"
 						}
@@ -125,7 +129,13 @@
 				"inputs": [
 					{
 						"referenceName": "Parquet3",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": {
+								"value": "@variables('my_parquet_file')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -136,6 +146,12 @@
 				]
 			}
 		],
+		"variables": {
+			"my_parquet_file": {
+				"type": "String",
+				"defaultValue": "pet_file_data.parquet"
+			}
+		},
 		"annotations": []
 	}
 }
