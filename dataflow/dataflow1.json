@@ -16,6 +16,9 @@
 			"transformations": [
 				{
 					"name": "TransposeColumns"
+				},
+				{
+					"name": "PickRequiredColumns"
 				}
 			],
 			"scriptLines": [
@@ -37,7 +40,25 @@
 				"          Secondary_Breed = iifNull({Secondary Breed}, 'Unknown'),",
 				"          Species_Upper = upper(Species),",
 				"          License_Number = toInteger(translate({License Number}, 'S', '')),",
-				"          {Animal's_Name} = translate({Animal's Name}, '()[]', '')) ~> TransposeColumns"
+				"          {Animal's_Name} = translate({Animal's Name}, '()[]', ''),",
+				"          Load_Dt = currentDate()) ~> TransposeColumns",
+				"TransposeColumns select(mapColumn(",
+				"          {License Issue Date},",
+				"          {License Number},",
+				"          {Animal's Name},",
+				"          Species,",
+				"          {Primary Breed},",
+				"          {Secondary Breed},",
+				"          {ZIP Code},",
+				"          LIC_ISSUE_DATE,",
+				"          ZIP_Code,",
+				"          Secondary_Breed,",
+				"          Species_Upper,",
+				"          License_Number,",
+				"          {Animal's_Name}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> PickRequiredColumns"
 			]
 		}
 	}
