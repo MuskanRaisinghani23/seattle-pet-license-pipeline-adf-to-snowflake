@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "transpose"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          {License Issue Date} as string,",
@@ -27,7 +31,12 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     limit: 100,",
-				"     ignoreNoFilesFound: false) ~> readTSVfile"
+				"     ignoreNoFilesFound: false) ~> readTSVfile",
+				"readTSVfile derive(LIC_ISSUE_DATE = toDate({License Issue Date}, 'MMMM dd yyyy'),",
+				"          {Secondary Breed} = iifNull({Secondary Breed}, 'Unknown'),",
+				"          {ZIP Code} = lpad(toString({ZIP Code}), 5, '0'),",
+				"          Species = upper(Species),",
+				"          {License Number} = toInteger(translate({License Number}, 'S', ''))) ~> transpose"
 			]
 		}
 	}
