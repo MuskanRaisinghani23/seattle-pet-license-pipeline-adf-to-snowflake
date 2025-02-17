@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText3",
+						"referenceName": "DelimitedText2",
 						"type": "DatasetReference"
 					},
 					"name": "readTSVfile"
@@ -16,7 +16,7 @@
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          {License_Issue_Date     License_Number     Animal_Name     Species     Primary_Breed     Secondary_Breed     ZIP_Code} as string",
+				"          {License_Issue_Date     License_Number     Animals_Name     Species     Primary_Breed     Secondary_Breed     ZIP_Code} as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
