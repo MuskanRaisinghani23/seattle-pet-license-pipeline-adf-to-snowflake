@@ -6,22 +6,22 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText2",
+						"referenceName": "DelimitedText3",
 						"type": "DatasetReference"
 					},
-					"name": "resdTSVfile"
+					"name": "readTSVfile"
 				}
 			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          {License_Issue_Date     License_Number     Animals_Name     Species     Primary_Breed     Secondary_Breed     ZIP_Code} as string",
+				"          {License_Issue_Date     License_Number     Animal_Name     Species     Primary_Breed     Secondary_Breed     ZIP_Code} as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     limit: 100,",
-				"     ignoreNoFilesFound: false) ~> resdTSVfile"
+				"     ignoreNoFilesFound: false) ~> readTSVfile"
 			]
 		}
 	}
