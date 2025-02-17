@@ -15,7 +15,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "transpose"
+					"name": "TransposeColumns"
 				}
 			],
 			"scriptLines": [
@@ -32,12 +32,12 @@
 				"     validateSchema: false,",
 				"     limit: 100,",
 				"     ignoreNoFilesFound: false) ~> readTSVfile",
-				"readTSVfile derive(LIC_ISSUE_DATE = toDate({License Issue Date}, 'MMMM dd yyyy'),",
-				"          {Secondary Breed} = iifNull({Secondary Breed}, 'Unknown'),",
-				"          {ZIP Code} = lpad(toString({ZIP Code}), 5, '0'),",
-				"          Species = upper(Species),",
-				"          {License Number} = toInteger(translate({License Number}, 'S', '')),",
-				"          {Animal's Name} = translate({Animal's Name}, '()', '')) ~> transpose"
+				"readTSVfile derive(LIC_ISSUE_DATE = toDate({License Issue Date}, 'MMMM dd yyyy', 'en-US'),",
+				"          ZIP_Code = lpad(toString({ZIP Code}), 5, '0'),",
+				"          Secondary_Breed = iifNull({Secondary Breed}, 'Unknown'),",
+				"          Species_Upper = upper(Species),",
+				"          License_Number = toInteger(translate({License Number}, 'S', '')),",
+				"          {Animal's_Name} = translate({Animal's Name}, '()[]', '')) ~> TransposeColumns"
 			]
 		}
 	}
