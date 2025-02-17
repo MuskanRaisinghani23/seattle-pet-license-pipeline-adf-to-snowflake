@@ -36,7 +36,8 @@
 				"          {Secondary Breed} = iifNull({Secondary Breed}, 'Unknown'),",
 				"          {ZIP Code} = lpad(toString({ZIP Code}), 5, '0'),",
 				"          Species = upper(Species),",
-				"          {License Number} = toInteger(translate({License Number}, 'S', ''))) ~> transpose"
+				"          {License Number} = toInteger(translate({License Number}, 'S', '')),",
+				"          {Animal's Name} = translate({Animal's Name}, '()', '')) ~> transpose"
 			]
 		}
 	}
