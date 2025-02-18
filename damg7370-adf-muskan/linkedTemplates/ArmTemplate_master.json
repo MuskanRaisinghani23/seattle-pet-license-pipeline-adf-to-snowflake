@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Snowflake1'"
 		},
+		"AzureBlobStorage1_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
+		},
 		"AzureDataLakeStorage_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://damg7370muskan.dfs.core.windows.net/"
@@ -26,10 +30,6 @@
 		"Snowflake1_properties_typeProperties_role": {
 			"type": "string",
 			"defaultValue": "DEVELOPER"
-		},
-		"AzureBlobStorage1_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -61,6 +61,9 @@
 					"Snowflake1_password": {
 						"value": "[parameters('Snowflake1_password')]"
 					},
+					"AzureBlobStorage1_sasUri": {
+						"value": "[parameters('AzureBlobStorage1_sasUri')]"
+					},
 					"AzureDataLakeStorage_LS_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage_LS_properties_typeProperties_url')]"
 					},
@@ -72,13 +75,30 @@
 					},
 					"Snowflake1_properties_typeProperties_role": {
 						"value": "[parameters('Snowflake1_properties_typeProperties_role')]"
-					},
-					"AzureBlobStorage1_sasUri": {
-						"value": "[parameters('AzureBlobStorage1_sasUri')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "damg7370-adf-muskan_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'damg7370-adf-muskan_ArmTemplate_0')]"
+			]
 		}
 	]
 }

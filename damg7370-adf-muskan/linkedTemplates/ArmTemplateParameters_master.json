@@ -8,6 +8,9 @@
 		"Snowflake1_password": {
 			"value": ""
 		},
+		"AzureBlobStorage1_sasUri": {
+			"value": ""
+		},
 		"AzureDataLakeStorage_LS_properties_typeProperties_url": {
 			"value": "https://damg7370muskan.dfs.core.windows.net/"
 		},
@@ -19,9 +22,6 @@
 		},
 		"Snowflake1_properties_typeProperties_role": {
 			"value": "DEVELOPER"
-		},
-		"AzureBlobStorage1_sasUri": {
-			"value": ""
 		},
 		"containerUri": {
 			"value": ""
