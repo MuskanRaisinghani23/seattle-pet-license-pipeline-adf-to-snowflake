@@ -23,6 +23,11 @@
 								"value": "'@{pipeline().RunId}'",
 								"type": "Expression"
 							}
+						},
+						"datasetParameters": {
+							"readTSVfile": {
+								"FileSource": "Seattle_Pet_Licenses_20250206.tsv"
+							}
 						}
 					},
 					"compute": {
