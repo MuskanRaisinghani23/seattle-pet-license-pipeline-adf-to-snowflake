@@ -1,5 +1,5 @@
 {
-	"name": "SEATTLE_V2_STAGE",
+	"name": "SEATTLE_V2_SNOWFLAKE_STAGE",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake1",
