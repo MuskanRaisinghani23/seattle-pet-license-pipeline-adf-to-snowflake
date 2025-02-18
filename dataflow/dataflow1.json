@@ -22,6 +22,9 @@
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     Job_Id as string (\"10\")",
+				"}",
 				"source(output(",
 				"          {License Issue Date} as string,",
 				"          {License Number} as string,",
@@ -41,7 +44,7 @@
 				"          Species_Upper = upper(Species),",
 				"          License_Number = toInteger(translate({License Number}, 'S', '')),",
 				"          {Animal's_Name} = translate({Animal's Name}, '()[]', ''),",
-				"          Job_ID = ERROR_FUNCTION(''),",
+				"          Job_ID = $Job_Id,",
 				"          Load_Dt = currentDate()) ~> TransposeColumns",
 				"TransposeColumns select(mapColumn(",
 				"          {License Issue Date},",
