@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "DF_seattle_pet_license",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -53,7 +53,9 @@
 				"          Species = Species_Upper,",
 				"          {Primary Breed},",
 				"          {Secondary Breed} = Secondary_Breed,",
-				"          {ZIP Code} = ZIP_Code",
+				"          {ZIP Code} = ZIP_Code,",
+				"          Job_ID,",
+				"          Load_Dt",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> PickRequiredColumns"
