@@ -112,7 +112,7 @@
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(BREED_SK = MAXBREEDSK + RowNum,",
 				"          DI_LOAD_DT = currentTimestamp(),",
-				"          DI_JOB_ID = ERROR_FUNCTION('')) ~> derivedColumn"
+				"          DI_JOB_ID = $DI_JOB_ID) ~> derivedColumn"
 			]
 		}
 	}
