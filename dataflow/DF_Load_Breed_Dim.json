@@ -73,7 +73,6 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     limit: 100,",
 				"     format: 'table') ~> sourceSTAGE",
 				"source(output(",
 				"          MAXBREEDSK as decimal(10,0)",
