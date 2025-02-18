@@ -1,5 +1,5 @@
 {
-	"name": "SEATTLE_V2_SNOWFLAKE_LOCATIONDIM",
+	"name": "ds_seattle_pet_location_dim",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake1",
