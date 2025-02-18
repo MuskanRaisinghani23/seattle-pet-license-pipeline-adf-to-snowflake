@@ -20,13 +20,6 @@
 					},
 					"name": "SinkSnowflake",
 					"description": "Export data to V2_PET_LICENSE_STAGE"
-				},
-				{
-					"dataset": {
-						"referenceName": "SeattlePetLicenseParquet",
-						"type": "DatasetReference"
-					},
-					"name": "SinkParquet"
 				}
 			],
 			"transformations": [
@@ -42,7 +35,13 @@
 				"     Job_Id as string (\"10\")",
 				"}",
 				"source(output(",
-				"          {License Issue Date     License Number     Animal's Name     Species     Primary Breed     Secondary Breed     ZIP Code} as string",
+				"          {License Issue Date} as string,",
+				"          {License Number} as string,",
+				"          {Animal's Name} as string,",
+				"          Species as string,",
+				"          {Primary Breed} as string,",
+				"          {Secondary Breed} as string,",
+				"          {ZIP Code} as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -99,24 +98,7 @@
 				"          ZIP_CODE = ZIP_Code,",
 				"          DI_JOB_ID = Job_ID,",
 				"          DI_LOAD_DT = Load_Dt",
-				"     )) ~> SinkSnowflake",
-				"PickRequiredColumns sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          License_Issue_Date as string,",
-				"          License_Number as string,",
-				"          Animals_Name as string,",
-				"          Species as string,",
-				"          Primary_Breed as string,",
-				"          Secondary_Breed as string,",
-				"          ZIP_Code as string",
-				"     ),",
-				"     format: 'parquet',",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SinkParquet"
+				"     )) ~> SinkSnowflake"
 			]
 		}
 	}
