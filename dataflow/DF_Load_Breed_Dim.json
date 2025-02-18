@@ -50,7 +50,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     DI_JOB_ID as string (\"10\")",
+				"     DI_JOB_ID as string ($DI_JOB_ID)",
 				"}",
 				"source(output(",
 				"          LICENSE_ISSUE_DATE as string,",
@@ -112,7 +112,7 @@
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(BREED_SK = MAXBREEDSK + RowNum,",
 				"          DI_LOAD_DT = currentTimestamp(),",
-				"          DI_JOB_ID = $DI_JOB_ID) ~> derivedColumn"
+				"          DI_JOB_ID = ERROR_FUNCTION('')) ~> derivedColumn"
 			]
 		}
 	}
