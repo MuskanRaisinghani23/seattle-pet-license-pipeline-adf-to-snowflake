@@ -20,7 +20,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"Job_Id": {
-								"value": "'@{pipeline().RunId}'",
+								"value": "'@{substring(pipeline().RunId, 1, 10)}'",
 								"type": "Expression"
 							}
 						},
