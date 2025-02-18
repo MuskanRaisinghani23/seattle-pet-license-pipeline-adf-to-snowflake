@@ -6,21 +6,31 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SEATTLE_V2_SNOWFLAKE_STAGE",
+						"referenceName": "ds_seattle_pet_stage",
 						"type": "DatasetReference"
 					},
-					"name": "sourceSTAGEDATA"
+					"name": "sourceSNOWFLAKESTAGE"
 				},
 				{
 					"dataset": {
-						"referenceName": "SEATTLE_V2_SNOWFLAKE_LOCATIONDIM",
+						"referenceName": "ds_seattle_pet_location_dim",
 						"type": "DatasetReference"
 					},
 					"name": "sourceLOCATIONDIM"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "join3"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          LICENSE_ISSUE_DATE as string,",
@@ -35,7 +45,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceSTAGEDATA",
+				"     limit: 100,",
+				"     format: 'table') ~> sourceSNOWFLAKESTAGE",
 				"source(output(",
 				"          LOCATION_SK as string,",
 				"          CITY as string,",
@@ -47,7 +58,20 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceLOCATIONDIM"
+				"     limit: 100,",
+				"     format: 'table') ~> sourceLOCATIONDIM",
+				"join2 join(joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join3 join(joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"sourceSNOWFLAKESTAGE join(joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3"
 			]
 		}
 	}
