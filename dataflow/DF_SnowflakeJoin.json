@@ -22,7 +22,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "joinLocationDIM"
+					"name": "join1"
 				}
 			],
 			"scriptLines": [
@@ -54,11 +54,10 @@
 				"     validateSchema: false,",
 				"     limit: 100,",
 				"     format: 'table') ~> sourceLOCATIONDIM",
-				"sourceSNOWFLAKESTAGE, sourceLOCATIONDIM join(sourceSNOWFLAKESTAGE@ZIP_CODE == sourceLOCATIONDIM@ZIP_CODE,",
-				"     joinType:'inner',",
+				"sourceSNOWFLAKESTAGE join(joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinLocationDIM"
+				"     broadcast: 'auto')~> join1"
 			]
 		}
 	}
