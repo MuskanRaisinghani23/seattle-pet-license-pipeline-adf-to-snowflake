@@ -40,6 +40,8 @@
 			{
 				"name": "LoadBreedDim",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "CleanPetLicData",
