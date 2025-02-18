@@ -47,22 +47,16 @@
 				"          Job_ID = $Job_Id,",
 				"          Load_Dt = currentDate()) ~> TransposeColumns",
 				"TransposeColumns select(mapColumn(",
-				"          {License Issue Date},",
-				"          {License Number},",
-				"          {Animal's Name},",
-				"          Species,",
+				"          {License Issue Date} = LIC_ISSUE_DATE,",
+				"          {License Number} = License_Number,",
+				"          {Animal's Name} = {Animal's_Name},",
+				"          Species = Species_Upper,",
 				"          {Primary Breed},",
-				"          {Secondary Breed},",
-				"          {ZIP Code},",
-				"          LIC_ISSUE_DATE,",
-				"          ZIP_Code,",
-				"          Secondary_Breed,",
-				"          Species_Upper,",
-				"          License_Number,",
-				"          {Animal's_Name}",
+				"          {Secondary Breed} = Secondary_Breed,",
+				"          {ZIP Code} = ZIP_Code",
 				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> PickRequiredColumns"
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> PickRequiredColumns"
 			]
 		}
 	}
