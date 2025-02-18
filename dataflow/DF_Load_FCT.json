@@ -12,6 +12,10 @@
 					"name": "sourceSnowflakeStage"
 				},
 				{
+					"dataset": {
+						"referenceName": "ds_seattle_pet_location_dim",
+						"type": "DatasetReference"
+					},
 					"name": "sourceLocationDim"
 				},
 				{
@@ -86,8 +90,18 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceSnowflakeStage",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> sourceLocationDim",
+				"source(output(",
+				"          LOCATION_SK as string,",
+				"          CITY as string,",
+				"          STATE as string,",
+				"          STATE_ABBR as string,",
+				"          ZIP_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceLocationDim",
 				"source(output(",
 				"          BREED_SK as string,",
 				"          START_DT as string,",
