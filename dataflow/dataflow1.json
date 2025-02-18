@@ -31,6 +31,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "sourceSeattleFct"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable2",
+						"type": "DatasetReference"
+					},
+					"name": "sourceDateDim"
 				}
 			],
 			"sinks": [],
@@ -40,9 +47,27 @@
 				},
 				{
 					"name": "joinBreedDim"
+				},
+				{
+					"name": "joinDateDim"
+				},
+				{
+					"name": "joinFct"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "derivedColumn"
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     JOB_ID as string (\"30\")",
+				"}",
 				"source(output(",
 				"          LICENSE_ISSUE_DATE as string,",
 				"          LICENSE_NUMBER as string,",
@@ -91,6 +116,23 @@
 				"     validateSchema: false,",
 				"     query: 'SELECT NVL(MAX(PET_LIC_SK),0) AS PET_LIC_SK FROM SEATTLE_PET_SCHEMA.PET_LIC_FCT',",
 				"     format: 'query') ~> sourceSeattleFct",
+				"source(output(",
+				"          DT as string,",
+				"          ABRV_DAY_NAME as string,",
+				"          MONTH_NAME as string,",
+				"          START_DAY_OF_MONTH as string,",
+				"          END_DAY_OF_MONTH as string,",
+				"          QUARTER_NUM as string,",
+				"          DAY_OF_WEEK as string,",
+				"          IS_WEEKEND as string,",
+				"          YEAR_NUM as string,",
+				"          MONTH_NUM as string,",
+				"          DAY_NUM as string,",
+				"          DATE_DIM_SK as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDateDim",
 				"sourceSnowflakeStage, sourceLocationDim join(sourceSnowflakeStage@ZIP_CODE == sourceLocationDim@ZIP_CODE,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
@@ -102,7 +144,33 @@
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinBreedDim"
+				"     broadcast: 'auto')~> joinBreedDim",
+				"joinBreedDim, sourceDateDim join(LICENSE_ISSUE_DATE == DT,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinDateDim",
+				"joinDateDim, sourceSeattleFct join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinFct",
+				"joinFct select(mapColumn(",
+				"          LICENSE_ISSUE_DATE,",
+				"          LICENSE_NUMBER,",
+				"          LOCATION_SK,",
+				"          BREED_SK,",
+				"          DATE_DIM_SK,",
+				"          PET_LIC_SK",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"select keyGenerate(output(ROW_NUM as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey derive(PET_LIC_SK = ROW_NUM + PET_LIC_SK,",
+				"          JOB_ID = $JOB_ID,",
+				"          LOAD_DT = currentTimestamp()) ~> derivedColumn"
 			]
 		}
 	}
