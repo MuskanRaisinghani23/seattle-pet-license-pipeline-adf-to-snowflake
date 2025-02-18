@@ -45,7 +45,6 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     limit: 100,",
 				"     ignoreNoFilesFound: false) ~> readTSVfile",
 				"readTSVfile derive(LIC_ISSUE_DATE = toDate({License Issue Date}, 'MMMM dd yyyy', 'en-US'),",
 				"          ZIP_Code = lpad(toString({ZIP Code}), 5, '0'),",
