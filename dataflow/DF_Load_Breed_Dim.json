@@ -26,7 +26,15 @@
 					"name": "sourceBreedDim"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_seattle_pet_breed_dim",
+						"type": "DatasetReference"
+					},
+					"name": "sinkBreedDim"
+				}
+			],
 			"transformations": [
 				{
 					"name": "SourceDataWithSK"
@@ -50,7 +58,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     DI_JOB_ID as string ($DI_JOB_ID)",
+				"     DI_JOB_ID as string (\"59\")",
 				"}",
 				"source(output(",
 				"          LICENSE_ISSUE_DATE as string,",
@@ -75,16 +83,12 @@
 				"     query: 'SELECT NVL(MAX(BREED_SK), 0) as\\nMaxBreedSK FROM SEATTLE_PET_SCHEMA.BREED_DIM',",
 				"     format: 'query') ~> BreedDimMaxID",
 				"source(output(",
-				"          BREED_SK as string,",
-				"          START_DT as string,",
-				"          END_DT as string,",
-				"          IS_CURRENT as string,",
+				"          BREED_SK as decimal(10,0),",
 				"          SPECIES_NAME as string,",
-				"          BREED_DK as string,",
 				"          PRIMARY_BREED_NAME as string,",
 				"          SECONDARY_BREED_NAME as string,",
 				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DT as string",
+				"          DI_LOAD_DT as date",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -112,7 +116,37 @@
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(BREED_SK = MAXBREEDSK + RowNum,",
 				"          DI_LOAD_DT = currentTimestamp(),",
-				"          DI_JOB_ID = $DI_JOB_ID) ~> derivedColumn"
+				"          DI_JOB_ID = uuid()) ~> derivedColumn",
+				"derivedColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BREED_SK as string,",
+				"          START_DT as string,",
+				"          END_DT as string,",
+				"          IS_CURRENT as string,",
+				"          SPECIES_NAME as string,",
+				"          BREED_DK as string,",
+				"          PRIMARY_BREED_NAME as string,",
+				"          SECONDARY_BREED_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          BREED_SK,",
+				"          SPECIES_NAME,",
+				"          PRIMARY_BREED_NAME,",
+				"          SECONDARY_BREED_NAME,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT",
+				"     )) ~> sinkBreedDim"
 			]
 		}
 	}
