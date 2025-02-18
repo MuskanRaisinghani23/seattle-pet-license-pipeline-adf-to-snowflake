@@ -34,7 +34,7 @@
 				"     JobID as string (\"20\")",
 				"}",
 				"source(output(",
-				"          state_fips as string,",
+				"          state_fips as short,",
 				"          state as string,",
 				"          state_abbr as string,",
 				"          zipcode as string,",
