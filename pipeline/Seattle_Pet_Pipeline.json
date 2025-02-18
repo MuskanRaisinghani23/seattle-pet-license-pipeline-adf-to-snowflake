@@ -61,13 +61,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Load_Breed_Dim",
-						"type": "DataFlowReference",
-						"parameters": {
-							"DI_JOB_ID": {
-								"value": "'@{pipeline().RunId}'",
-								"type": "Expression"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
