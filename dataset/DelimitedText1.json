@@ -5,12 +5,21 @@
 			"referenceName": "AzureDataLakeStorage_LS",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"FileSource": {
+				"type": "string",
+				"defaultValue": "Seattle_Pet_Licenses_20250206.tsv"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Seattle_Pet_Licenses_20250206.tsv",
+				"fileName": {
+					"value": "@dataset().FileSource",
+					"type": "Expression"
+				},
 				"fileSystem": "bronze"
 			},
 			"columnDelimiter": "\t",
