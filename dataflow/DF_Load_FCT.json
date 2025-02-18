@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "DF_Load_FCT",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
