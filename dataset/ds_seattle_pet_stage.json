@@ -1,5 +1,5 @@
 {
-	"name": "SEATTLE_V2_SNOWFLAKE_STAGE",
+	"name": "ds_seattle_pet_stage",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake1",
