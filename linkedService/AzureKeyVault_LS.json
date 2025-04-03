@@ -1,5 +1,6 @@
 {
 	"name": "AzureKeyVault_LS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"description": "access my key vault from ADF",
 		"annotations": [],
