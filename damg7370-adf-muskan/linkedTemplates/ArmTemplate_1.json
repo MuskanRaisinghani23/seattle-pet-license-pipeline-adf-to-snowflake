@@ -13,248 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/DF_Load_Location_Dim')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "geo_data_csv",
-								"type": "DatasetReference"
-							},
-							"name": "sourceGeoFile"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_seattle_pet_location_dim",
-								"type": "DatasetReference"
-							},
-							"name": "sinkLocationDim"
-						}
-					],
-					"transformations": [
-						{
-							"name": "surrogateKey"
-						},
-						{
-							"name": "derivedColumns"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     JobID as string (\"20\")",
-						"}",
-						"source(output(",
-						"          state_fips as short,",
-						"          state as string,",
-						"          state_abbr as string,",
-						"          zipcode as string,",
-						"          county as string,",
-						"          city as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> sourceGeoFile",
-						"sourceGeoFile keyGenerate(output(SK_ID as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey",
-						"surrogateKey derive(DI_CREATED_DT = currentTimestamp(),",
-						"          DI_JOB_ID = $JobID) ~> derivedColumns",
-						"derivedColumns sink(allowSchemaDrift: false,",
-						"     validateSchema: false,",
-						"     input(",
-						"          LOCATION_SK as string,",
-						"          CITY as string,",
-						"          STATE as string,",
-						"          STATE_ABBR as string,",
-						"          ZIP_CODE as string,",
-						"          DI_JOB_ID as string,",
-						"          DI_LOAD_DT as string",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     truncate:true,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     stageInsert: true,",
-						"     mapColumn(",
-						"          LOCATION_SK = SK_ID,",
-						"          CITY = city,",
-						"          STATE = state,",
-						"          STATE_ABBR = state_abbr,",
-						"          ZIP_CODE = zipcode,",
-						"          DI_JOB_ID,",
-						"          DI_LOAD_DT = DI_CREATED_DT",
-						"     )) ~> sinkLocationDim"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DF_Load_Breed_Dim')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ds_seattle_pet_stage",
-								"type": "DatasetReference"
-							},
-							"name": "sourceSTAGE"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_seattle_pet_breed_dim",
-								"type": "DatasetReference"
-							},
-							"name": "BreedDimMaxID"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_seattle_pet_breed_dim",
-								"type": "DatasetReference"
-							},
-							"name": "sourceBreedDim"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "ds_seattle_pet_breed_dim",
-								"type": "DatasetReference"
-							},
-							"name": "sinkBreedDim"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SourceDataWithSK"
-						},
-						{
-							"name": "aggregateBreedKeys",
-							"description": "Aggregating data by 'SPECIES', \"PRIMARY_BREED, 'SECONDARY_BREED', 'MAXBREEDSK' producing columns"
-						},
-						{
-							"name": "joinToTarget"
-						},
-						{
-							"name": "filterExistingRows"
-						},
-						{
-							"name": "surrogateKey"
-						},
-						{
-							"name": "derivedColumn"
-						}
-					],
-					"scriptLines": [
-						"parameters{",
-						"     DI_JOB_ID as string (\"59\")",
-						"}",
-						"source(output(",
-						"          LICENSE_ISSUE_DATE as string,",
-						"          LICENSE_NUMBER as string,",
-						"          ANIMAL_NAME as string,",
-						"          SPECIES as string,",
-						"          PRIMARY_BREED as string,",
-						"          SECONDARY_BREED as string,",
-						"          ZIP_CODE as string,",
-						"          DI_JOB_ID as string,",
-						"          DI_LOAD_DT as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table') ~> sourceSTAGE",
-						"source(output(",
-						"          MAXBREEDSK as decimal(10,0)",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     query: 'SELECT NVL(MAX(BREED_SK), 0) as\\nMaxBreedSK FROM SEATTLE_PET_SCHEMA.BREED_DIM',",
-						"     format: 'query') ~> BreedDimMaxID",
-						"source(output(",
-						"          BREED_SK as decimal(10,0),",
-						"          SPECIES_NAME as string,",
-						"          PRIMARY_BREED_NAME as string,",
-						"          SECONDARY_BREED_NAME as string,",
-						"          DI_JOB_ID as string,",
-						"          DI_LOAD_DT as date",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     format: 'table') ~> sourceBreedDim",
-						"sourceSTAGE, BreedDimMaxID join(1==1,",
-						"     joinType:'cross',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> SourceDataWithSK",
-						"SourceDataWithSK aggregate(groupBy(SPECIES,",
-						"          PRIMARY_BREED,",
-						"          SECONDARY_BREED,",
-						"          MAXBREEDSK),",
-						"     COUNT_ROW = count(LICENSE_NUMBER)) ~> aggregateBreedKeys",
-						"aggregateBreedKeys, sourceBreedDim join(PRIMARY_BREED == PRIMARY_BREED_NAME",
-						"     && SECONDARY_BREED == SECONDARY_BREED_NAME",
-						"     && SPECIES == SPECIES_NAME,",
-						"     joinType:'left',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> joinToTarget",
-						"joinToTarget filter(isNull(SPECIES_NAME)&&isNull(PRIMARY_BREED_NAME)&&isNull(SECONDARY_BREED_NAME)) ~> filterExistingRows",
-						"filterExistingRows keyGenerate(output(RowNum as long),",
-						"     startAt: 1L,",
-						"     stepValue: 1L) ~> surrogateKey",
-						"surrogateKey derive(BREED_SK = MAXBREEDSK + RowNum,",
-						"          DI_LOAD_DT = currentTimestamp(),",
-						"          DI_JOB_ID = uuid()) ~> derivedColumn",
-						"derivedColumn sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          BREED_SK as string,",
-						"          START_DT as string,",
-						"          END_DT as string,",
-						"          IS_CURRENT as string,",
-						"          SPECIES_NAME as string,",
-						"          BREED_DK as string,",
-						"          PRIMARY_BREED_NAME as string,",
-						"          SECONDARY_BREED_NAME as string,",
-						"          DI_JOB_ID as string,",
-						"          DI_LOAD_DT as string",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     stageInsert: true,",
-						"     mapColumn(",
-						"          BREED_SK,",
-						"          SPECIES_NAME = SPECIES,",
-						"          PRIMARY_BREED_NAME = PRIMARY_BREED,",
-						"          SECONDARY_BREED_NAME = SECONDARY_BREED,",
-						"          DI_JOB_ID,",
-						"          DI_LOAD_DT",
-						"     )) ~> sinkBreedDim"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DF_Load_FCT')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -440,14 +198,14 @@
 						"derivedColumn sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          PET_LIC_SK as string,",
-						"          DATE_SK as string,",
-						"          LOCATION_SK as string,",
-						"          BREED_SK as string,",
-						"          LICENSE_NUMBER as string,",
+						"          PET_LIC_SK as decimal(10,0),",
+						"          DATE_SK as decimal(10,0),",
+						"          LOCATION_SK as decimal(10,0),",
+						"          BREED_SK as decimal(10,0),",
+						"          LICENSE_NUMBER as decimal(38,0),",
 						"          ANIMAL_NAME as string,",
 						"          DI_JOB_ID as string,",
-						"          DI_JOB_DT as string",
+						"          DI_JOB_DT as date",
 						"     ),",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -466,6 +224,200 @@
 						"          DI_JOB_ID = JOB_ID,",
 						"          DI_JOB_DT = LOAD_DT",
 						"     )) ~> sinkFct"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_Load_Location_Dim')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "geo_data_csv",
+								"type": "DatasetReference"
+							},
+							"name": "sourceGeoFile"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_seattle_pet_location_dim",
+								"type": "DatasetReference"
+							},
+							"name": "sinkLocationDim"
+						}
+					],
+					"transformations": [
+						{
+							"name": "surrogateKey"
+						},
+						{
+							"name": "derivedColumns"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     JobID as string (\"20\")",
+						"}",
+						"source(output(",
+						"          state_fips as short,",
+						"          state as string,",
+						"          state_abbr as string,",
+						"          zipcode as string,",
+						"          county as string,",
+						"          city as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> sourceGeoFile",
+						"sourceGeoFile keyGenerate(output(SK_ID as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> surrogateKey",
+						"surrogateKey derive(DI_CREATED_DT = currentTimestamp(),",
+						"          DI_JOB_ID = $JobID) ~> derivedColumns",
+						"derivedColumns sink(allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     input(",
+						"          LOCATION_SK as decimal(10,0),",
+						"          CITY as string,",
+						"          STATE as string,",
+						"          STATE_ABBR as string,",
+						"          ZIP_CODE as string,",
+						"          DI_JOB_ID as string,",
+						"          DI_LOAD_DT as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     truncate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     stageInsert: true,",
+						"     mapColumn(",
+						"          LOCATION_SK = SK_ID,",
+						"          CITY = city,",
+						"          STATE = state,",
+						"          STATE_ABBR = state_abbr,",
+						"          ZIP_CODE = zipcode,",
+						"          DI_JOB_ID,",
+						"          DI_LOAD_DT = DI_CREATED_DT",
+						"     )) ~> sinkLocationDim"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_seattle_pet_license')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DelimitedText1",
+								"type": "DatasetReference"
+							},
+							"name": "readTSVfile"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "V2_PET_LICENSE_STAGE",
+								"type": "DatasetReference"
+							},
+							"name": "SinkSnowflake",
+							"description": "Export data to V2_PET_LICENSE_STAGE"
+						}
+					],
+					"transformations": [
+						{
+							"name": "TransposeColumns"
+						},
+						{
+							"name": "PickRequiredColumns"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     Job_Id as string (\"10\")",
+						"}",
+						"source(output(",
+						"          {License Issue Date} as string,",
+						"          {License Number} as string,",
+						"          {Animal's Name} as string,",
+						"          Species as string,",
+						"          {Primary Breed} as string,",
+						"          {Secondary Breed} as string,",
+						"          {ZIP Code} as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> readTSVfile",
+						"readTSVfile derive(LIC_ISSUE_DATE = toDate({License Issue Date}, 'MMMM dd yyyy', 'en-US'),",
+						"          ZIP_Code = lpad(toString({ZIP Code}), 5, '0'),",
+						"          Secondary_Breed = iifNull({Secondary Breed}, 'Unknown'),",
+						"          Species_Upper = upper(Species),",
+						"          License_Number = toInteger(translate({License Number}, 'S', '')),",
+						"          {Animal's_Name} = translate({Animal's Name}, '()[]', ''),",
+						"          Job_ID = $Job_Id,",
+						"          Load_Dt = currentDate()) ~> TransposeColumns",
+						"TransposeColumns select(mapColumn(",
+						"          License_Issue_Date = LIC_ISSUE_DATE,",
+						"          License_Number,",
+						"          Animal_Name = {Animal's_Name},",
+						"          Species = Species_Upper,",
+						"          Primary_Breed = {Primary Breed},",
+						"          Secondary_Breed,",
+						"          ZIP_Code,",
+						"          Job_ID,",
+						"          Load_Dt",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> PickRequiredColumns",
+						"PickRequiredColumns sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          LICENSE_ISSUE_DATE as date,",
+						"          LICENSE_NUMBER as decimal(38,0),",
+						"          ANIMAL_NAME as string,",
+						"          SPECIES as string,",
+						"          PRIMARY_BREED as string,",
+						"          SECONDARY_BREED as string,",
+						"          ZIP_CODE as string,",
+						"          DI_JOB_ID as string,",
+						"          DI_LOAD_DT as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     truncate:true,",
+						"     format: 'table',",
+						"     stageInsert: true,",
+						"     mapColumn(",
+						"          LICENSE_ISSUE_DATE = License_Issue_Date,",
+						"          LICENSE_NUMBER = License_Number,",
+						"          ANIMAL_NAME = Animal_Name,",
+						"          SPECIES = Species,",
+						"          PRIMARY_BREED = Primary_Breed,",
+						"          SECONDARY_BREED = Secondary_Breed,",
+						"          ZIP_CODE = ZIP_Code,",
+						"          DI_JOB_ID = Job_ID,",
+						"          DI_LOAD_DT = Load_Dt",
+						"     )) ~> SinkSnowflake"
 					]
 				}
 			},
@@ -504,8 +456,7 @@
 										"FileSource": "Seattle_Pet_Licenses_20250206.tsv"
 									},
 									"SinkSnowflake": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -549,8 +500,7 @@
 									"BreedDimMaxID": {},
 									"sourceBreedDim": {},
 									"sinkBreedDim": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -596,8 +546,7 @@
 									"sourceSeattleFct": {},
 									"sourceDateDim": {},
 									"sinkFct": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -639,8 +588,7 @@
 								"datasetParameters": {
 									"sourceGeoFile": {},
 									"sinkLocationDim": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
@@ -659,10 +607,11 @@
 						"type": "string"
 					}
 				},
-				"annotations": []
+				"annotations": [],
+				"lastPublishTime": "2025-02-18T04:56:06Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DF_Load_Breed_Dim')]",
+				"[concat(variables('factoryId'), '/dataflows/DF_seattle_pet_license')]",
 				"[concat(variables('factoryId'), '/dataflows/DF_Load_FCT')]",
 				"[concat(variables('factoryId'), '/dataflows/DF_Load_Location_Dim')]"
 			]
