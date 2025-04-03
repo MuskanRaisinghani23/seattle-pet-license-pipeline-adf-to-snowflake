@@ -251,6 +251,8 @@
 				"defaultValue": "pet_file_data.parquet"
 			}
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2025-02-07T03:53:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }
